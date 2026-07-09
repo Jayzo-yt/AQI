@@ -1,0 +1,61 @@
+{
+  "model_key": "xgb_station",
+  "model_type": "XGBRegressor",
+  "split_strategy": "station_holdout",
+  "selection_criterion": "lowest RMSE on station-held-out test set",
+  "feature_columns_in_order": [
+    "NO2_sat",
+    "SO2_sat",
+    "CO_sat",
+    "O3_sat",
+    "HCHO_sat",
+    "AOD",
+    "temperature_K",
+    "relative_humidity",
+    "BLH",
+    "wind_speed"
+  ],
+  "target_column": "PM2.5",
+  "test_metrics": {
+    "rmse": 32.7382214476641,
+    "mae": 20.212983322230542,
+    "r": 0.857007078321213
+  },
+  "all_candidate_metrics": {
+    "rf_station": {
+      "rmse": 32.902963108440524,
+      "mae": 21.275594815619534,
+      "r": 0.8246910415200539
+    },
+    "xgb_station": {
+      "rmse": 32.7382214476641,
+      "mae": 20.212983322230542,
+      "r": 0.857007078321213
+    }
+  },
+  "all_model_metrics_full": {
+    "rf_random": {
+      "rmse": 27.72870231363377,
+      "mae": 17.905605602022955,
+      "r": 0.8873755485766888
+    },
+    "rf_station": {
+      "rmse": 32.902963108440524,
+      "mae": 21.275594815619534,
+      "r": 0.8246910415200539
+    },
+    "xgb_random": {
+      "rmse": 31.36471210444339,
+      "mae": 18.44371114682196,
+      "r": 0.8786950185367667
+    },
+    "xgb_station": {
+      "rmse": 32.7382214476641,
+      "mae": 20.212983322230542,
+      "r": 0.857007078321213
+    }
+  },
+  "trained_on_rows": 46175,
+  "saved_at": "20260622_163239",
+  "input_csv": "C:\\Users\\Jayyanth\\Desktop\\ISRO\\output\\final_dataset_v3.csv"
+}

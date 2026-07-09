@@ -1,0 +1,45 @@
+{
+  "model_type": "XGBRegressor",
+  "target_transform": "log1p (predictions must be inverted with expm1, then clipped at 0)",
+  "aod_scale_factor_applied": 0.001,
+  "note": "AOD in this model's training data was corrected from raw MAIAC band values to physical AOD units (x0.001). Any new data fed to this model MUST have the same 0.001 scale factor applied to its AOD column before prediction, or predictions will be wrong.",
+  "split_strategy": "station_holdout",
+  "feature_columns_in_order": [
+    "NO2_sat",
+    "SO2_sat",
+    "CO_sat",
+    "O3_sat",
+    "HCHO_sat",
+    "AOD",
+    "temperature_K",
+    "relative_humidity",
+    "BLH",
+    "wind_speed"
+  ],
+  "hyperparameters_used": {
+    "subsample": 0.9,
+    "reg_lambda": 2.0,
+    "reg_alpha": 1.0,
+    "n_estimators": 800,
+    "min_child_weight": 7,
+    "max_depth": 10,
+    "learning_rate": 0.01,
+    "colsample_bytree": 0.8
+  },
+  "sample_weighting": {
+    "threshold": 150,
+    "weight": 3.0
+  },
+  "test_metrics": {
+    "rmse": 32.16703078709955,
+    "mae": 19.09541900982083,
+    "r": 0.8664991628445241
+  },
+  "previous_unscaled_aod_metrics": {
+    "rmse": 32.17,
+    "mae": 19.1,
+    "r": 0.866
+  },
+  "trained_on_rows": 27171,
+  "saved_at": "20260622_162942"
+}
