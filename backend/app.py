@@ -48,6 +48,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Demo data for presentation features
+DEMO_DATA = {
+  "feature_1": {
+    "hotspot": {"name":"Sangrur, Punjab", "coords":[30.2,75.5], "hcho_ppb":6.2, "fire_confidence":0.94},
+    "trajectory": [
+      {"time":"Oct 15","location":"Punjab","aqi":85},
+      {"time":"Oct 16","location":"Haryana","aqi":287},
+      {"time":"Oct 17","location":"Delhi","aqi":380},
+      {"time":"Oct 18","location":"Lucknow","aqi":412}
+    ]
+  },
+  "feature_2": {
+    "delhi": {"aqi":185, "uncertainty":"±15", "confidence":0.94},
+    "himalayas": {"aqi":45, "uncertainty":"±35", "confidence":0.61}
+  },
+  "feature_3": {
+    "timeline": [
+      {"date":"Oct 15", "aqi_delhi":152, "hcho_delhi":2.0, "fires":24},
+      {"date":"Oct 17", "aqi_delhi":380, "hcho_delhi":4.2, "fires":18}
+    ]
+  }
+}
+
+@app.get("/api/demo")
+async def get_demo_data():
+    return DEMO_DATA
+
 # Paths
 BASE_PATH = Path(r"C:\Users\Jayyanth\Desktop\ISRO")
 OUTPUT_PATH = BASE_PATH / "output"

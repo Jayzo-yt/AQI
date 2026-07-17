@@ -17,12 +17,24 @@ interface LeftControlPanelProps {
   onLocationSelect: (location: { lat: number; lng: number }) => void
   aqiLayer: boolean
   onAqiLayerToggle: (visible: boolean) => void
+  demoTrajectory: boolean
+  onDemoTrajectoryToggle: (visible: boolean) => void
+  demoUncertainty: boolean
+  onDemoUncertaintyToggle: (visible: boolean) => void
+  demoSplitView: boolean
+  onDemoSplitViewToggle: (visible: boolean) => void
 }
 
 export function LeftControlPanel({
   onLocationSelect,
   aqiLayer,
   onAqiLayerToggle,
+  demoTrajectory,
+  onDemoTrajectoryToggle,
+  demoUncertainty,
+  onDemoUncertaintyToggle,
+  demoSplitView,
+  onDemoSplitViewToggle,
 }: LeftControlPanelProps) {
   const [cities, setCities] = useState<City[]>([])
   const [filteredCities, setFilteredCities] = useState<City[]>([])
@@ -134,6 +146,52 @@ export function LeftControlPanel({
             className="hidden"
           />
           <span className="text-[12px] font-medium text-slate-400 group-hover:text-white transition-colors">AQI Heatmap Layer</span>
+        </label>
+      </div>
+
+      <div className="p-5 border-t border-white/5 space-y-3 bg-indigo-950/40">
+        <h3 className="text-[11px] font-semibold tracking-[0.15em] text-indigo-300">SKYTRACE DEMO FEATURES</h3>
+        
+        {/* Feature 1: Trajectory */}
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${demoTrajectory ? 'bg-indigo-500 border-indigo-500' : 'border-slate-600 bg-transparent'}`}>
+            {demoTrajectory && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+          </div>
+          <input
+            type="checkbox"
+            checked={demoTrajectory}
+            onChange={(event) => onDemoTrajectoryToggle(event.target.checked)}
+            className="hidden"
+          />
+          <span className="text-[12px] font-medium text-indigo-200 group-hover:text-white transition-colors">1. Fire → City Trajectory Map</span>
+        </label>
+
+        {/* Feature 2: Uncertainty */}
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${demoUncertainty ? 'bg-indigo-500 border-indigo-500' : 'border-slate-600 bg-transparent'}`}>
+            {demoUncertainty && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+          </div>
+          <input
+            type="checkbox"
+            checked={demoUncertainty}
+            onChange={(event) => onDemoUncertaintyToggle(event.target.checked)}
+            className="hidden"
+          />
+          <span className="text-[12px] font-medium text-indigo-200 group-hover:text-white transition-colors">2. Kriging Uncertainty Layers</span>
+        </label>
+
+        {/* Feature 3: Split View */}
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${demoSplitView ? 'bg-indigo-500 border-indigo-500' : 'border-slate-600 bg-transparent'}`}>
+            {demoSplitView && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+          </div>
+          <input
+            type="checkbox"
+            checked={demoSplitView}
+            onChange={(event) => onDemoSplitViewToggle(event.target.checked)}
+            className="hidden"
+          />
+          <span className="text-[12px] font-medium text-indigo-200 group-hover:text-white transition-colors">3. Dual-Objective Split View</span>
         </label>
       </div>
     </motion.div>

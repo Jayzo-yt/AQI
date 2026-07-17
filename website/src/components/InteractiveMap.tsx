@@ -10,7 +10,11 @@ interface InteractiveMapProps {
   selectedLocation: { lat: number; lng: number } | null
   aqiLayer: boolean
   onLocationClick: (location: { lat: number; lng: number }) => void
+  demoTrajectory?: boolean
+  demoUncertainty?: boolean
+  mapId?: string
 }
+
 
 const INDIA_BOUNDS: [LatLngTuple, LatLngTuple] = [
   [8, 68],
@@ -36,9 +40,13 @@ export default function InteractiveMap({
   selectedLocation,
   aqiLayer,
   onLocationClick,
+  demoTrajectory,
+  demoUncertainty,
+  mapId = 'interactive-map',
 }: InteractiveMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<LeafletMap | null>(null)
+  const demoLayerGroup = useRef<L.LayerGroup | null>(null)
   const overlayRef = useRef<ImageOverlay | null>(null)
   const markerRef = useRef<CircleMarker | null>(null)
   const haloRef = useRef<CircleMarker | null>(null)
@@ -115,6 +123,8 @@ export default function InteractiveMap({
       map.current?.invalidateSize()
     })
 
+    demoLayerGroup.current = L.layerGroup().addTo(map.current)
+
     return () => {
       resizeObserver.disconnect()
       overlayRef.current?.remove()
@@ -123,10 +133,12 @@ export default function InteractiveMap({
       markerRef.current = null
       haloRef.current?.remove()
       haloRef.current = null
+      demoLayerGroup.current?.remove()
+      demoLayerGroup.current = null
       map.current?.remove()
       map.current = null
     }
-  }, [])
+  }, [mapId])
 
   useEffect(() => {
     if (!map.current) return
@@ -149,12 +161,79 @@ export default function InteractiveMap({
 
     markerRef.current = L.circleMarker([selectedLocation.lat, selectedLocation.lng], {
       radius: 6,
-      fillColor: '#38bdf8',
-      color: '#ffffff',
+      fillColor: '#ffffff',
+      color: '#0284c7',
       weight: 2,
       opacity: 1,
-      fillOpacity: 0.95,
+      fillOpacity: 1,
     }).addTo(map.current)
+  }, [selectedLocation])
+
+  // Demo features effect
+  useEffect(() => {
+    if (!map.current || !demoLayerGroup.current) return
+    demoLayerGroup.current.clearLayers()
+
+    if (demoTrajectory) {
+      const coords: LatLngTuple[] = [
+        [30.2, 75.5], // Punjab
+        [29.05, 76.08], // Haryana
+        [28.61, 77.23], // Delhi
+        [26.84, 80.94], // Lucknow
+      ]
+      
+      L.polyline(coords, {
+        color: '#ff4444',
+        weight: 3,
+        dashArray: '10, 10',
+        className: 'animate-pulse'
+      }).addTo(demoLayerGroup.current)
+
+      coords.forEach((coord, i) => {
+        L.circleMarker(coord, {
+          radius: 8,
+          fillColor: '#ff0000',
+          color: '#ffffff',
+          weight: 2,
+          fillOpacity: 0.8
+        }).addTo(demoLayerGroup.current!).bindPopup(`Trajectory Node ${i+1}`)
+      })
+    }
+
+    if (demoUncertainty) {
+      L.circleMarker([28.61, 77.23], { // Delhi
+        radius: 40,
+        fillColor: '#00ff00',
+        color: '#00ff00',
+        weight: 1,
+        fillOpacity: 0.2
+      }).addTo(demoLayerGroup.current).bindPopup('Delhi Uncertainty: ±15 (High Confidence)')
+
+      L.circleMarker([32.0, 78.0], { // Himalayas
+        radius: 60,
+        fillColor: '#0000ff',
+        color: '#0000ff',
+        weight: 1,
+        fillOpacity: 0.2
+      }).addTo(demoLayerGroup.current).bindPopup('Himalayas Uncertainty: ±35 (Low Confidence)')
+    }
+
+    // Split view (HCHO coloring) handled implicitly by aqiLayer=false and mapId styling or just no AQI overlay
+    if (mapId === 'hcho-map') {
+      // HCHO specific map adjustments (e.g. adding fires)
+      L.circleMarker([30.2, 75.5], {
+        radius: 20,
+        fillColor: '#a855f7',
+        color: '#a855f7',
+        weight: 1,
+        fillOpacity: 0.5
+      }).addTo(demoLayerGroup.current).bindPopup('Punjab Fire Cluster')
+    }
+
+  }, [demoTrajectory, demoUncertainty, mapId])
+
+  useEffect(() => {
+    if (!markerRef.current || !selectedLocation || !map.current) return
 
     markerRef.current.bindTooltip(
       `${selectedLocation.lat.toFixed(2)}°N, ${selectedLocation.lng.toFixed(2)}°E`,
