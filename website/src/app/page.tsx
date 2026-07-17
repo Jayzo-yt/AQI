@@ -20,6 +20,11 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState<string>('2020-01-15')
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [aqiLayer, setAqiLayer] = useState(true)
+  
+  // Demo states
+  const [demoTrajectory, setDemoTrajectory] = useState(false)
+  const [demoUncertainty, setDemoUncertainty] = useState(false)
+  const [demoSplitView, setDemoSplitView] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000)
@@ -42,16 +47,43 @@ export default function Home() {
           onLocationSelect={setSelectedLocation}
           aqiLayer={aqiLayer}
           onAqiLayerToggle={setAqiLayer}
+          demoTrajectory={demoTrajectory}
+          onDemoTrajectoryToggle={setDemoTrajectory}
+          demoUncertainty={demoUncertainty}
+          onDemoUncertaintyToggle={setDemoUncertainty}
+          demoSplitView={demoSplitView}
+          onDemoSplitViewToggle={setDemoSplitView}
         />
 
         {/* Central Interactive Map */}
-        <div className="flex-1 relative min-h-0 bg-[#0B0F14]">
-          <InteractiveMap 
-            selectedDate={selectedDate}
-            selectedLocation={selectedLocation}
-            aqiLayer={aqiLayer}
-            onLocationClick={setSelectedLocation}
-          />
+        <div className={`flex-1 relative min-h-0 bg-[#0B0F14] flex ${demoSplitView ? 'flex-row' : ''}`}>
+          <div className="flex-1 relative">
+            {demoSplitView && <div className="absolute top-4 left-4 z-[400] bg-black/60 px-3 py-1 rounded text-xs font-semibold tracking-wider border border-white/10">SURFACE AQI</div>}
+            <InteractiveMap 
+              selectedDate={selectedDate}
+              selectedLocation={selectedLocation}
+              aqiLayer={aqiLayer}
+              onLocationClick={setSelectedLocation}
+              demoTrajectory={demoTrajectory}
+              demoUncertainty={demoUncertainty}
+              mapId="main-map"
+            />
+          </div>
+
+          {demoSplitView && (
+            <div className="flex-1 relative border-l border-white/10">
+              <div className="absolute top-4 left-4 z-[400] bg-black/60 px-3 py-1 rounded text-xs font-semibold tracking-wider border border-white/10 text-purple-400">HCHO ANOMALY (FIRES)</div>
+              <InteractiveMap 
+                selectedDate={selectedDate}
+                selectedLocation={selectedLocation}
+                aqiLayer={false}
+                onLocationClick={setSelectedLocation}
+                demoTrajectory={false}
+                demoUncertainty={false}
+                mapId="hcho-map"
+              />
+            </div>
+          )}
           
           {/* Time Slider Overlay */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 max-w-2xl z-[1000]">
